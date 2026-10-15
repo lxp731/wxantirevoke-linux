@@ -1,9 +1,36 @@
-# 构建产物（install.sh / gcc 生成，不入库）
+# ---------- 构建产物（install.sh / gcc 生成，不入库） ----------
+# 仓库里只有源码，.so 由 install.sh 现编译；这样也避免把二进制提交进历史
 *.so
+*.so.*
 *.o
+*.a
+*.d
 
-# 编辑器 / 系统杂项
+# ---------- 调试 / 运行时可能在仓库目录里留下的东西 ----------
+# 例如 WXPROBE_LOG=./probe.log wechat-probe，或手工改二进制时留的备份
+*.log
+*.bak
+*.orig
+*.rej
+# core dump（微信本体很大，一个 dump 几百 MB，别误提交）
+/core
+core.[0-9]*
+vgcore.*
+
+# ---------- 辅助脚本 ----------
 __pycache__/
+*.py[cod]
+.venv/
+
+# ---------- 编辑器 / IDE ----------
+.vscode/
+.idea/
+.cache/
+compile_commands.json
 *.swp
+*.swo
 *~
+
+# ---------- 系统杂项 ----------
 .DS_Store
+Thumbs.db
