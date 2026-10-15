@@ -1,0 +1,32 @@
+#!/bin/sh
+# 「补丁 + 探针」双载启动：既打补丁，也记录撤回实际走的代码路径。
+# 用来验证补丁是否生效，同时若无效则直接留下定位线索。
+set -u
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/wxantirevoke"
+mkdir -p "$STATE"
+LIBDIR="$HOME/.local/lib/wxantirevoke"
+MARK="$STATE/mark"
+
+if pgrep -f '^/opt/wechat/wechat$' >/dev/null 2>&1; then
+    echo "⚠ 微信正在运行，请先完全退出微信（托盘 → 退出）再运行本脚本。"
+    exit 1
+fi
+
+echo "补丁: $LIBDIR/libwxantirevoke.so"
+echo "探针: $LIBDIR/libwxprobe.so"
+echo "日志: $STATE/probe.log (探针)  /  $STATE/wechat.log (补丁)"
+echo
+echo "操作步骤："
+echo "  1) 微信登录好、界面正常后，等 15 秒（探针启动 10 秒后布防）"
+echo "  2) wxantirevoke-mark        ← 打开始标记"
+echo "  3) 让别人给你发一条消息，然后让他撤回（**对方撤回**，这是真正的场景）"
+echo "     如果找不到别人：手机微信发消息给自己的另一个号/群里的小号再撤回"
+echo "  4) 再测一次【自己撤回】：你自己发一条然后自己撤回，观察消息是否还变成提示"
+echo "  5) wxantirevoke-mark        ← 打结束标记"
+echo
+printf "按回车启动..."
+read _x
+
+export LD_PRELOAD="$LIBDIR/libwxantirevoke.so:$LIBDIR/libwxprobe.so${LD_PRELOAD:+:$LD_PRELOAD}"
+exec "$HOME/.local/bin/wechat-antirevoke"

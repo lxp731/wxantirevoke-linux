@@ -1,0 +1,40 @@
+#!/bin/sh
+# 检查当前安装的微信是否仍在已知补丁点表覆盖范围内（不启动微信）
+set -u
+
+WECHAT_BIN="${WECHAT_BIN:-/opt/wechat/wechat}"
+
+# 每行: 标签|文件偏移|期望原始字节(hex)|补丁后字节(hex)
+# 文件偏移 = VA - 0x1000（.text 段的换算）
+TABLE="
+newmsgid(0x60df783)|0x60de783|e8b89e2d01|31c0909090
+"
+
+[ -f "$WECHAT_BIN" ] || { echo "找不到 $WECHAT_BIN"; exit 1; }
+
+echo "目标: $WECHAT_BIN"
+echo "大小: $(stat -c %s "$WECHAT_BIN")"
+echo "sha256: $(sha256sum "$WECHAT_BIN" | cut -d' ' -f1)"
+echo
+
+echo "$TABLE" | while IFS='|' read -r label off want patched; do
+    [ -n "${off:-}" ] || continue
+    n=$((${#want} / 2))
+    got=$(xxd -s "$off" -l "$n" -p "$WECHAT_BIN" 2>/dev/null)
+    if [ "$got" = "$want" ]; then
+        echo "  [可用] $label  偏移 $off  原始字节 = $got"
+    elif [ "$got" = "$patched" ]; then
+        echo "  [已改] $label  偏移 $off —— 磁盘文件被改过（本工具不会这么做）"
+    else
+        echo "  [失效] $label  偏移 $off"
+        echo "         期望 $want"
+        echo "         实际 $got"
+        echo "         => 微信版本已更新，补丁点需要重新定位。"
+        echo "            此时防撤回会静默失效（库不会写入、不会改坏程序）。"
+        echo "            参考 docs/重新定位补丁点.md"
+    fi
+done
+
+echo
+echo "补丁只在内存生效。确认是否生效："
+echo "  grep wxantirevoke \"\${XDG_STATE_HOME:-\$HOME/.local/state}/wxantirevoke/wechat.log\""

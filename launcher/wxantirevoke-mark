@@ -1,0 +1,6 @@
+#!/bin/sh
+# 给探针日志打一个计数快照标记
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/wxantirevoke"
+mkdir -p "$STATE"
+touch "$STATE/mark"
+echo "已打标记（写入 $STATE/mark）"

@@ -1,0 +1,28 @@
+#!/bin/sh
+# 微信防撤回启动器（LD_PRELOAD 内存补丁；不改动 /opt/wechat 下任何文件）
+#
+# 用法:
+#   wechat-antirevoke            # 正常启动（带防撤回）
+#   WXANTIREVOKE=off wechat-antirevoke   # 本次启动不带补丁（排障用）
+#   WXANTIREVOKE_VERBOSE=1 wechat-antirevoke  # 打印补丁细节
+#
+# 日志: ~/.local/state/wxantirevoke/wechat.log
+
+LIB="${WXANTIREVOKE_LIB:-$HOME/.local/lib/wxantirevoke/libwxantirevoke.so}"
+WECHAT_BIN="${WECHAT_BIN:-/opt/wechat/wechat}"
+
+if [ ! -r "$LIB" ]; then
+    echo "[wechat-antirevoke] 找不到 $LIB，直接以原版启动" >&2
+    exec "$WECHAT_BIN" "$@"
+fi
+if [ ! -x "$WECHAT_BIN" ]; then
+    echo "[wechat-antirevoke] 找不到 $WECHAT_BIN" >&2
+    exit 1
+fi
+
+# 支持自己构建的版本，也保留调用者已有的 LD_PRELOAD
+export LD_PRELOAD="$LIB${LD_PRELOAD:+:$LD_PRELOAD}"
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/wxantirevoke"
+mkdir -p "$STATE" 2>/dev/null
+exec "$WECHAT_BIN" "$@" 2>>"$STATE/wechat.log"

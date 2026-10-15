@@ -1,0 +1,9 @@
+# 构建产物（install.sh / gcc 生成，不入库）
+*.so
+*.o
+
+# 编辑器 / 系统杂项
+__pycache__/
+*.swp
+*~
+.DS_Store
