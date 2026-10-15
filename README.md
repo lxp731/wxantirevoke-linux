@@ -34,7 +34,7 @@ Linux 版微信（腾讯官方 Universal 版）**防撤回**。
 
 | 平台 | 方案 |
 |---|---|
-| **Windows** | **[huiyadanli/RevokeMsgPatcher](https://github.com/huiyadanli/RevokeMsgPatcher)** —— PC 版微信 / QQ / TIM 防撤回补丁（本项目的补丁手法与它同源） |
+| **Windows** | **[huiyadanli/RevokeMsgPatcher](https://github.com/huiyadanli/RevokeMsgPatcher)** —— PC 版微信 / QQ / TIM 防撤回补丁，直接下载它的发布包即可（本项目的补丁手法与它同源） |
 | macOS | [fzlzjerry/wechat-antirecall](https://github.com/fzlzjerry/wechat-antirecall) —— 本项目的 `newmsgid` 思路就来自它的 `revoke-tip` 模式 |
 
 ---
@@ -234,3 +234,12 @@ docs/                 原理 / 排查记录 / 探针工具 / 重新定位补丁�
 ```
 
 `*.so` 是 `install.sh` 里现编译的，已在 `.gitignore` 中，不入库。
+
+## License
+
+[GPL-3.0](LICENSE)。
+
+补丁点的定位思路与数据参考了
+[huiyadanli/RevokeMsgPatcher](https://github.com/huiyadanli/RevokeMsgPatcher)（Windows，GPL-3.0）、
+[fzlzjerry/wechat-antirecall](https://github.com/fzlzjerry/wechat-antirecall)（macOS）、
+[zetaloop/BetterWX](https://github.com/zetaloop/BetterWX)，故同样以 GPL-3.0 发布。
