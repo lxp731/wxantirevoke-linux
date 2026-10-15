@@ -28,6 +28,17 @@ Linux 版微信（腾讯官方 Universal 版）**防撤回**。
 
 ---
 
+## 其他平台
+
+本工具**只针对 Linux**（微信官方 Universal 版）。Windows / macOS 请用对应方案：
+
+| 平台 | 方案 |
+|---|---|
+| **Windows** | **[huiyadanli/RevokeMsgPatcher](https://github.com/huiyadanli/RevokeMsgPatcher)** —— PC 版微信 / QQ / TIM 防撤回补丁（本项目的补丁手法与它同源） |
+| macOS | [fzlzjerry/wechat-antirecall](https://github.com/fzlzjerry/wechat-antirecall) —— 本项目的 `newmsgid` 思路就来自它的 `revoke-tip` 模式 |
+
+---
+
 ## 第 0 步：你的微信是哪种安装方式？
 
 本工具是**按二进制打补丁**的，所以只跟 `/opt/wechat/wechat` 这个文件有关，
